@@ -24,6 +24,11 @@
       margin: 5px 0;
       font-size: 20px;
       text-align: right;
+      border: 1px solid #ccc; /* Oryginalna obramówka */
+    }
+
+    input[type="text"].error {
+      border: 2px solid red; /* Obramówka dla błędnego wyniku */
     }
 
     input[type="button"] {
@@ -66,12 +71,13 @@
 
   <script>
     var mathProblemElement = document.getElementById("math-problem");
+    var displayElement = document.getElementById("display");
     var operators = ['+', '-', '*', '/'];
 
     function generateMathProblem() {
       var num1 = Math.floor(Math.random() * 10);
       var num2 = Math.floor(Math.random() * 10);
-      var operator = operators[Math.floor(Math.random() * operators.length)];
+      var operator = operators[Math.floor(Math.random() * operators.length);
 
       var mathProblem = num1 + " " + operator + " " + num2;
       mathProblemElement.innerText = mathProblem;
@@ -80,15 +86,17 @@
     generateMathProblem(); // Wygeneruj pierwsze zadanie
 
     function addToDisplay(value) {
-      document.getElementById("display").value += value;
+      displayElement.value += value;
+      displayElement.classList.remove("error"); // Usuń obramówkę w razie zmiany wpisu
     }
 
     function clearDisplay() {
-      document.getElementById("display").value = "";
+      displayElement.value = "";
+      displayElement.classList.remove("error");
     }
 
     function calculate() {
-      var userAnswer = document.getElementById("display").value;
+      var userAnswer = displayElement.value;
       var mathProblemText = mathProblemElement.innerText;
 
       try {
@@ -96,12 +104,14 @@
         if (userAnswer == correctAnswer) {
           // Poprawna odpowiedź, generuj nowe zadanie
           generateMathProblem();
-          document.getElementById("display").value = "";
+          displayElement.value = "";
         } else {
-          document.getElementById("display").value = "Błąd";
+          displayElement.value = "Błąd";
+          displayElement.classList.add("error"); // Dodaj obramówkę
         }
       } catch (error) {
-        document.getElementById("display").value = "Błąd";
+        displayElement.value = "Błąd";
+        displayElement.classList.add("error");
       }
     }
   </script>
