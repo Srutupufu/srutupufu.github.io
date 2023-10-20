@@ -1,74 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Inwazja Wymiarów</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
   <style>
     body {
       margin: 0;
-      overflow: hidden;
-    }
-
-    #game-container {
-      width: 100vw;
-      height: 100vh;
-      background-color: #000;
-      position: relative;
-    }
-
-    #player {
-      width: 50px;
-      height: 50px;
-      background-color: #00f;
-      position: absolute;
-      bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="player"></div>
-  </div>
-
   <script>
-    const player = document.getElementById("player");
-    const gameContainer = document.getElementById("game-container");
-
-    let playerX = 0;
-    const playerSpeed = 5;
-
-    // Zmienna do śledzenia pozycji początkowej dotknięcia palca
-    let touchStartX = 0;
-
-    function updatePlayerPosition() {
-      playerX += playerSpeed;
-      if (playerX > window.innerWidth) {
-        playerX = -player.offsetWidth;
+    var config = {
+      type: Phaser.AUTO,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      scene: {
+        preload: preload,
+        create: create,
+        update: update
       }
-      if (playerX < -player.offsetWidth) {
-        playerX = window.innerWidth;
-      }
-      player.style.left = playerX + "px";
-      requestAnimationFrame(updatePlayerPosition);
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload() {
+      this.load.image('player', 'path/to/player.png');
     }
 
-    gameContainer.addEventListener("touchstart", (event) => {
-      touchStartX = event.touches[0].clientX;
-    });
+    var player;
+    var pointer;
 
-    gameContainer.addEventListener("touchmove", (event) => {
-      const touchX = event.touches[0].clientX;
-      const deltaX = touchX - touchStartX;
-      playerX += deltaX;
-      if (playerX < -player.offsetWidth) {
-        playerX = -player.offsetWidth;
-      }
-      if (playerX > window.innerWidth - player.offsetWidth) {
-        playerX = window.innerWidth - player.offsetWidth;
-      }
-      player.style.left = playerX + "px";
-      touchStartX = touchX;
-    });
+    function create() {
+      player = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight - 100, 'player');
+      player.setCollideWorldBounds(true);
 
-    requestAnimationFrame(updatePlayerPosition);
+      this.input.on('pointerdown', function (pointer) {
+        player.x = pointer.x;
+      });
+    }
+
+    function update() {
+      // Możesz dodać tutaj logikę gry, np. poruszanie wrogów, strzelanie itp.
+    }
   </script>
 </body>
 </html>
