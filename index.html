@@ -43,6 +43,9 @@
       if (playerX > window.innerWidth) {
         playerX = -player.offsetWidth;
       }
+      if (playerX < -player.offsetWidth) {
+        playerX = window.innerWidth;
+      }
       player.style.left = playerX + "px";
       requestAnimationFrame(updatePlayerPosition);
     }
@@ -55,8 +58,8 @@
       const touchX = event.touches[0].clientX;
       const deltaX = touchX - touchStartX;
       playerX += deltaX;
-      if (playerX < 0) {
-        playerX = 0;
+      if (playerX < -player.offsetWidth) {
+        playerX = -player.offsetWidth;
       }
       if (playerX > window.innerWidth - player.offsetWidth) {
         playerX = window.innerWidth - player.offsetWidth;
