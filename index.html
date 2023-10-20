@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #game-container {
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      position: relative;
+    }
+
+    #player {
+      width: 50px;
+      height: 50px;
+      background-color: #00f;
+      position: absolute;
+      bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="player"></div>
+  </div>
+
+  <script>
+    const player = document.getElementById("player");
+    const gameContainer = document.getElementById("game-container");
+
+    let playerX = 0;
+    const playerSpeed = 5;
+
+    // Zmienna do śledzenia pozycji początkowej dotknięcia palca
+    let touchStartX = 0;
+
+    function updatePlayerPosition() {
+      playerX += playerSpeed;
+      if (playerX > window.innerWidth) {
+        playerX = -player.offsetWidth;
+      }
+      player.style.left = playerX + "px";
+      requestAnimationFrame(updatePlayerPosition);
+    }
+
+    gameContainer.addEventListener("touchstart", (event) => {
+      touchStartX = event.touches[0].clientX;
+    });
+
+    gameContainer.addEventListener("touchmove", (event) => {
+      const touchX = event.touches[0].clientX;
+      const deltaX = touchX - touchStartX;
+      playerX += deltaX;
+      if (playerX < 0) {
+        playerX = 0;
+      }
+      if (playerX > window.innerWidth - player.offsetWidth) {
+        playerX = window.innerWidth - player.offsetWidth;
+      }
+      player.style.left = playerX + "px";
+      touchStartX = touchX;
+    });
+
+    requestAnimationFrame(updatePlayerPosition);
+  </script>
+</body>
+</html>
