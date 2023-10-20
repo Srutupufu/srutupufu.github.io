@@ -40,6 +40,7 @@
   </style>
 </head>
 <body>
+  <div id="math-problem"></div> <!-- Przeniesione na górę kalkulatora -->
   <div id="calculator">
     <input type="text" id="display" readonly>
     <input type="button" value="1" onclick="addToDisplay('1')">
@@ -62,8 +63,6 @@
     <input type="button" value="=" onclick="calculate()">
     <input type="button" value="/" onclick="addToDisplay('/')">
   </div>
-
-  <div id="math-problem"></div>
 
   <script>
     var mathProblemElement = document.getElementById("math-problem");
