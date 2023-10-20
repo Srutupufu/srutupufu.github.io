@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Kalkulator</title>
+  <title>Kalkulator z Zadaniami Matematycznymi</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@
     }
 
     input[type="text"] {
-      width: calc(100% - 20px); /* Poprawka */
+      width: calc(100% - 20px);
       padding: 10px;
       margin: 5px 0;
       font-size: 20px;
@@ -31,6 +31,11 @@
       height: 50px;
       font-size: 20px;
       margin: 5px;
+    }
+
+    #math-problem {
+      font-size: 24px;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -58,7 +63,23 @@
     <input type="button" value="/" onclick="addToDisplay('/')">
   </div>
 
+  <div id="math-problem"></div>
+
   <script>
+    var mathProblemElement = document.getElementById("math-problem");
+    var operators = ['+', '-', '*', '/'];
+
+    function generateMathProblem() {
+      var num1 = Math.floor(Math.random() * 10);
+      var num2 = Math.floor(Math.random() * 10);
+      var operator = operators[Math.floor(Math.random() * operators.length)];
+
+      var mathProblem = num1 + " " + operator + " " + num2;
+      mathProblemElement.innerText = mathProblem;
+    }
+
+    generateMathProblem(); // Wygeneruj pierwsze zadanie
+
     function addToDisplay(value) {
       document.getElementById("display").value += value;
     }
@@ -68,8 +89,18 @@
     }
 
     function calculate() {
+      var userAnswer = document.getElementById("display").value;
+      var mathProblemText = mathProblemElement.innerText;
+
       try {
-        document.getElementById("display").value = eval(document.getElementById("display").value);
+        var correctAnswer = eval(mathProblemText);
+        if (userAnswer == correctAnswer) {
+          // Poprawna odpowiedź, generuj nowe zadanie
+          generateMathProblem();
+          document.getElementById("display").value = "";
+        } else {
+          document.getElementById("display").value = "Błąd";
+        }
       } catch (error) {
         document.getElementById("display").value = "Błąd";
       }
