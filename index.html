@@ -5,43 +5,51 @@
   <title>Kalkulator z Zadaniami Matematycznymi</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Verdana', sans-serif;
       text-align: center;
+      background-color: #eef2f3;
     }
 
     #calculator {
-      width: 300px;
-      margin: 0 auto;
+      width: 320px;
+      margin: 50px auto;
       padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background-color: #f5f5f5;
-      text-align: center;
+      border: 2px solid #333;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     input[type="text"] {
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin: 5px 0;
-      font-size: 20px;
+      width: calc(100% - 22px);
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 22px;
       text-align: right;
       border: 1px solid #ccc;
-    }
-
-    input[type="text"].error {
-      border: 2px solid red;
+      border-radius: 5px;
     }
 
     input[type="button"] {
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
+      width: 60px;
+      height: 60px;
+      font-size: 18px;
       margin: 5px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    input[type="button"]:hover {
+      background-color: #0056b3;
     }
 
     #math-problem {
-      font-size: 24px;
+      font-size: 28px;
       margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -97,25 +105,19 @@
     }
 
     function calculate() {
-      var userAnswer = parseFloat(displayElement.value);
-      var mathProblemText = mathProblemElement.innerText;
+      var userExpression = displayElement.value;
+      var correctExpression = mathProblemElement.innerText;
+      var correctAnswer = Function('"use strict"; return (' + correctExpression + ')')();
 
-      try {
-        var correctAnswer = Function('"use strict"; return (' + mathProblemText + ')')();
-        if (userAnswer === correctAnswer) {
-          displayElement.value = "Poprawne!";
-          setTimeout(generateMathProblem, 1000); // Generuj nowe zadanie po 1 sekundzie
-        } else {
-          displayElement.value = "Błąd";
-          displayElement.classList.add("error");
-        }
-      } catch (error) {
+      if (parseFloat(userExpression) === correctAnswer) {
+        displayElement.value = "Poprawne!";
+        setTimeout(generateMathProblem, 1000);
+      } else {
         displayElement.value = "Błąd";
         displayElement.classList.add("error");
       }
     }
 
-    // Inicjalizuj pierwsze zadanie
     generateMathProblem();
   </script>
 </body>
