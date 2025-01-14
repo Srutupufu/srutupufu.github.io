@@ -51,6 +51,16 @@
       margin-top: 20px;
       font-weight: bold;
     }
+
+    #answer-input {
+      width: calc(100% - 22px);
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 22px;
+      text-align: right;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -73,15 +83,18 @@
     <br>
     <input type="button" value="C" onclick="clearDisplay()">
     <input type="button" value="0" onclick="addToDisplay('0')">
-    <input type="button" value="=" onclick="calculate()">
+    <input type="button" value="=" onclick="calculateDisplay()">
     <input type="button" value="/" onclick="addToDisplay('/')">
   </div>
 
   <div id="math-problem"></div>
+  <input type="text" id="answer-input" placeholder="Wpisz odpowiedź na zadanie">
+  <input type="button" value="Sprawdź odpowiedź" onclick="checkAnswer()">
 
   <script>
     var mathProblemElement = document.getElementById("math-problem");
     var displayElement = document.getElementById("display");
+    var answerInputElement = document.getElementById("answer-input");
     var operators = ['+', '-', '*', '/'];
 
     function generateMathProblem() {
@@ -91,33 +104,38 @@
 
       var mathProblem = num1 + " " + operator + " " + num2;
       mathProblemElement.innerText = mathProblem;
-      clearDisplay();
+      answerInputElement.value = "";
     }
 
     function addToDisplay(value) {
       displayElement.value += value;
-      displayElement.classList.remove("error");
     }
 
     function clearDisplay() {
       displayElement.value = "";
-      displayElement.classList.remove("error");
     }
 
-    function calculate() {
-      var userExpression = displayElement.value;
-      var correctExpression = mathProblemElement.innerText;
-      var correctAnswer = Function('"use strict"; return (' + correctExpression + ')')();
-
-      if (parseFloat(userExpression) === correctAnswer) {
-        displayElement.value = "Poprawne!";
-        setTimeout(generateMathProblem, 1000);
-      } else {
+    function calculateDisplay() {
+      try {
+        displayElement.value = eval(displayElement.value);
+      } catch (e) {
         displayElement.value = "Błąd";
-        displayElement.classList.add("error");
       }
     }
 
+    function checkAnswer() {
+      var userAnswer = parseFloat(answerInputElement.value);
+      var correctAnswer = Function('"use strict"; return (' + mathProblemElement.innerText + ')')();
+
+      if (userAnswer === correctAnswer) {
+        alert("Poprawna odpowiedź!");
+        generateMathProblem();
+      } else {
+        alert("Błędna odpowiedź. Spróbuj ponownie.");
+      }
+    }
+
+    // Inicjalizuj pierwsze zadanie
     generateMathProblem();
   </script>
 </body>
