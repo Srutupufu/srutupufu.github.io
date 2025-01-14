@@ -56,7 +56,6 @@
 <body>
   <div id="calculator">
     <input type="text" id="display" readonly>
-    <input type="text" id="result-input" disabled>
     <input type="button" value="1" onclick="addToDisplay('1')">
     <input type="button" value="2" onclick="addToDisplay('2')">
     <input type="button" value="3" onclick="addToDisplay('3')">
@@ -83,7 +82,6 @@
   <script>
     var mathProblemElement = document.getElementById("math-problem");
     var displayElement = document.getElementById("display");
-    var resultInputElement = document.getElementById("result-input");
     var operators = ['+', '-', '*', '/'];
 
     function generateMathProblem() {
@@ -93,7 +91,7 @@
 
       var mathProblem = num1 + " " + operator + " " + num2;
       mathProblemElement.innerText = mathProblem;
-      resultInputElement.value = "";
+      displayElement.value = "";
     }
 
     generateMathProblem(); // Wygeneruj pierwsze zadanie
@@ -105,25 +103,25 @@
 
     function clearDisplay() {
       displayElement.value = "";
-      resultInputElement.value = "";
       displayElement.classList.remove("error");
     }
 
     function calculate() {
-      var userAnswer = resultInputElement.value;
+      var userAnswer = displayElement.value;
       var mathProblemText = mathProblemElement.innerText;
+      var correctAnswer;
 
       try {
-        var correctAnswer = eval(mathProblemText);
-        if (userAnswer == correctAnswer) {
-          // Poprawna odpowiedź, generuj nowe zadanie
+        // Prosty parser dla obliczeń zamiast eval
+        correctAnswer = Function('"use strict";return (' + mathProblemText + ')')();
+        if (parseFloat(userAnswer) === correctAnswer) {
           generateMathProblem();
         } else {
-          resultInputElement.value = "Błąd";
+          displayElement.value = "Błąd";
           displayElement.classList.add("error");
         }
       } catch (error) {
-        resultInputElement.value = "Błąd";
+        displayElement.value = "Błąd";
         displayElement.classList.add("error");
       }
     }
