@@ -63,7 +63,7 @@
     <br>
     <input type="button" value="4" onclick="addToDisplay('4')">
     <input type="button" value="5" onclick="addToDisplay('5')">
-    <input type="button" value="6dupa" onclick="addToDisplay('6')">
+    <input type="button" value="6" onclick="addToDisplay('6')">
     <input type="button" value="-" onclick="addToDisplay('-')">
     <br>
     <input type="button" value="7" onclick="addToDisplay('7')">
@@ -107,24 +107,29 @@
     }
 
     function calculate() {
-    var userAnswer = displayElement.value;
+    var userAnswer = displayElement.value; // Pobranie wpisanego wyrażenia
     var mathProblemText = mathProblemElement.innerText;
     var correctAnswer;
 
     try {
-      // Obliczanie poprawnej odpowiedzi
+      // Obliczanie poprawnej odpowiedzi z zadania
       correctAnswer = Function('"use strict";return (' + mathProblemText + ')')();
-      // Porównanie jako liczby
+
+      // Sprawdzenie czy wpisana odpowiedź zgadza się z obliczonym wynikiem
       if (parseFloat(userAnswer) === correctAnswer) {
         // Jeśli odpowiedź jest poprawna, generuj nowe zadanie
-        generateMathProblem();
+        displayElement.value = "Poprawne!";
+        setTimeout(() => {
+          clearDisplay(); // Czyszczenie po krótkim czasie
+          generateMathProblem();
+        }, 1000); // Czekaj 1 sekundę przed wygenerowaniem nowego zadania
       } else {
-        // Jeśli odpowiedź jest błędna, wyświetl komunikat
+        // Jeśli odpowiedź jest błędna
         displayElement.value = "Błąd";
         displayElement.classList.add("error");
       }
     } catch (error) {
-      // W przypadku błędu również wyświetl komunikat
+      // Obsługa błędu obliczeniowego
       displayElement.value = "Błąd";
       displayElement.classList.add("error");
     }
