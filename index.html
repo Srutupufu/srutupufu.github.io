@@ -107,24 +107,28 @@
     }
 
     function calculate() {
-      var userAnswer = displayElement.value;
-      var mathProblemText = mathProblemElement.innerText;
-      var correctAnswer;
+    var userAnswer = displayElement.value;
+    var mathProblemText = mathProblemElement.innerText;
+    var correctAnswer;
 
-      try {
-        // Prosty parser dla obliczeń zamiast eval
-        correctAnswer = Function('"use strict";return (' + mathProblemText + ')')();
-        if (parseFloat(userAnswer) === correctAnswer) {
-          generateMathProblem();
-        } else {
-          displayElement.value = "Błąd";
-          displayElement.classList.add("error");
-        }
-      } catch (error) {
+    try {
+      // Obliczanie poprawnej odpowiedzi
+      correctAnswer = Function('"use strict";return (' + mathProblemText + ')')();
+      // Porównanie jako liczby
+      if (parseFloat(userAnswer) === correctAnswer) {
+        // Jeśli odpowiedź jest poprawna, generuj nowe zadanie
+        generateMathProblem();
+      } else {
+        // Jeśli odpowiedź jest błędna, wyświetl komunikat
         displayElement.value = "Błąd";
         displayElement.classList.add("error");
       }
+    } catch (error) {
+      // W przypadku błędu również wyświetl komunikat
+      displayElement.value = "Błąd";
+      displayElement.classList.add("error");
     }
+  }
   </script>
 </body>
 </html>
