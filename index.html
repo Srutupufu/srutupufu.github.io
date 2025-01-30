@@ -3,42 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animowana Strona</title>
+  <title>Leśne Sanktuarium</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    body {
+    * {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(120deg, #f6d365, #fda085, #a1c4fd, #c2e9fb);
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto Slab', serif;
+      min-height: 100vh;
+      background: linear-gradient(120deg, #d4e7c5, #bfd8af, #9bb982, #f5e6b3);
       background-size: 400% 400%;
-      animation: gradientBG 8s ease infinite;
+      animation: gradientBG 12s ease infinite;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+      opacity: 0.15;
+      z-index: -1;
     }
 
     h1 {
-      font-size: 3em;
-      color: #fff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      animation: fadeIn 2s ease-in-out infinite alternate;
+      text-align: center;
+      font-size: 3.5rem;
+      color: #2d4a22;
+      margin-bottom: 3rem;
+      text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+      animation: fadeIn 2s ease-out;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .nav-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background-image: linear-gradient(45deg, rgba(189, 215, 174, 0.3), rgba(242, 238, 197, 0.3));
+    }
+
+    .nav-box:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(77, 87, 54, 0.2);
+      background-image: linear-gradient(45deg, rgba(189, 215, 174, 0.5), rgba(242, 238, 197, 0.5));
+    }
+
+    .nav-box i {
+      font-size: 3rem;
+      color: #3a5a40;
+      margin-bottom: 1rem;
+    }
+
+    .nav-box h2 {
+      color: #344e41;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .nav-box p {
+      color: #588157;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    a {
+      text-decoration: none;
+      width: 100%;
     }
 
     @keyframes gradientBG {
       0% { background-position: 0% 50%; }
-      25% { background-position: 50% 50%; }
       50% { background-position: 100% 50%; }
-      75% { background-position: 50% 50%; }
       100% { background-position: 0% 50%; }
     }
 
     @keyframes fadeIn {
-      from { opacity: 0.5; }
-      to { opacity: 1; }
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .nav-box {
+        min-height: 200px;
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Witam na stronie!</h1>
+  <h1>Leśne Sanktuarium 🌿</h1>
+  
+  <div class="grid-container">
+    <a href="#">
+      <div class="nav-box">
+        <i class="fas fa-tree"></i>
+        <h2>Szlakami Natury</h2>
+        <p>Poznaj najpiękniejsze leśne trasy piesze i rowerowe</p>
+      </div>
+    </a>
+
+    <a href="#">
+      <div class="nav-box">
+        <i class="fas fa-camera"></i>
+        <h2>Leśna Fotogaleria</h2>
+        <p>Zobacz zdjęcia dzikich zwierząt i malowniczych krajobrazów</p>
+      </div>
+    </a>
+
+    <a href="#">
+      <div class="nav-box">
+        <i class="fas fa-binoculars"></i>
+        <h2>Obserwacje Ptaków</h2>
+        <p>Dowiedz się gdzie i kiedy obserwować leśne ptactwo</p>
+      </div>
+    </a>
+
+    <a href="#">
+      <div class="nav-box">
+        <i class="fas fa-book"></i>
+        <h2>Leśna Edukacja</h2>
+        <p>Materiały edukacyjne o florze i faunie naszych lasów</p>
+      </div>
+    </a>
+
+    <a href="#">
+      <div class="nav-box">
+        <i class="fas fa-campground"></i>
+        <h2>Miejsca Biwakowe</h2>
+        <p>Sprawdź gdzie możesz legalnie rozbić namiot w lesie</p>
+      </div>
+    </a>
+
+    <a href="#">
+      <div class="nav-box">
+        <i class="fas fa-leaf"></i>
+        <h2>Ekologia</h2>
+        <p>Jak dbać o las i uczestniczyć w akcjach ekologicznych</p>
+      </div>
+    </a>
+  </div>
 </body>
 </html>
