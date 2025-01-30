@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisielec Online</title>
+    <style>
+        :root {
+            --blue-dark: #2c3e50;
+            --blue-medium: #3498db;
+            --blue-light: #ecf0f1;
+            --green: #2ecc71;
+            --red: #e74c3c;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--blue-light);
+            color: var(--blue-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .game-section {
+            flex: 2;
+        }
+
+        #hangman {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .word-display {
+            font-size: 2.5em;
+            letter-spacing: 15px;
+            margin: 30px 0;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 5px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .letter-btn {
+            background: var(--blue-medium);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .letter-btn:hover:not(:disabled) {
+            background: var(--blue-dark);
+        }
+
+        .letter-btn.correct {
+            background: var(--green) !important;
+        }
+
+        .letter-btn.incorrect {
+            background: var(--red) !important;
+        }
+
+        .leaderboard {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid var(--blue-medium);
+            border-radius: 5px;
+        }
+
+        button {
+            background: var(--blue-medium);
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal" id="nickModal">
+        <div class="modal-content">
+            <h2>Podaj swój pseudonim</h2>
+            <input type="text" id="nickname" placeholder="Twój nick...">
+            <button onclick="startGame()">Rozpocznij grę</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="game-section">
+            <svg id="hangman" width="400" height="300"></svg>
+            <div class="word-display" id="wordDisplay"></div>
+            <div class="keyboard" id="keyboard"></div>
+        </div>
+        
+        <div class="leaderboard">
+            <h2>Ranking graczy</h2>
+            <ul id="scoreList"></ul>
+        </div>
+    </div>
+
+    <script>
+        let currentPlayer = '';
+        let wrongAttempts = 0;
+        let correctLetters = [];
+        let currentWord = '';
+        const maxAttempts = 8;
+        const words = ['PROGRAMOWANIE', 'KOMPUTER', 'INTERNET', 'ALGORYTM', 'BAZYDANYCH', 'FRAMEWORK', 'Aplikacja', 'Serwerownia'];
+        
+        // Inicjalizacja listy wyników
+        let scores = JSON.parse(localStorage.getItem('hangmanScores')) || [];
+
+        function startGame() {
+            currentPlayer = document.getElementById('nickname').value.trim();
+            if (!currentPlayer) return alert('Proszę podać pseudonim!');
+            
+            document.getElementById('nickModal').style.display = 'none';
+            initGame();
+            updateLeaderboard();
+        }
+
+        function initGame() {
+            currentWord = words[Math.floor(Math.random() * words.length)].toUpperCase();
+            wrongAttempts = 0;
+            correctLetters = [];
+            
+            // Generowanie klawiatury
+            const keyboard = document.getElementById('keyboard');
+            keyboard.innerHTML = '';
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                keyboard.innerHTML += `
+                    <button class="letter-btn" onclick="checkLetter('${letter}')">
+                        ${letter}
+                    </button>
+                `;
+            }
+
+            drawHangman();
+            updateWordDisplay();
+        }
+
+        function checkLetter(letter) {
+            const btn = document.querySelector(`.letter-btn:not(:disabled):contains('${letter}')`);
+            if (!btn || btn.disabled) return;
+
+            btn.disabled = true;
+            
+            if (currentWord.includes(letter)) {
+                btn.classList.add('correct');
+                correctLetters.push(letter);
+                updateWordDisplay();
+                
+                if (!document.getElementById('wordDisplay').textContent.includes('_')) {
+                    setTimeout(() => {
+                        scores.push({player: currentPlayer, word: currentWord});
+                        localStorage.setItem('hangmanScores', JSON.stringify(scores));
+                        alert('Gratulacje! Wygrałeś!');
+                        initGame();
+                        updateLeaderboard();
+                    }, 500);
+                }
+            } else {
+                btn.classList.add('incorrect');
+                wrongAttempts++;
+                drawHangman();
+                
+                if (wrongAttempts >= maxAttempts) {
+                    setTimeout(() => {
+                        alert(`Przegrałeś! Hasło to: ${currentWord}`);
+                        initGame();
+                    }, 500);
+                }
+            }
+        }
+
+        function drawHangman() {
+            const svg = document.getElementById('hangman');
+            svg.innerHTML = `
+                <!-- Podstawa -->
+                ${wrongAttempts > 0 ? '<line x1="50" y1="250" x2="200" y2="250" stroke="black" stroke-width="4"/>' : ''}
+                <!-- Słup -->
+                ${wrongAttempts > 1 ? '<line x1="125" y1="250" x2="125" y2="50" stroke="black" stroke-width="4"/>' : ''}
+                <!-- Belka -->
+                ${wrongAttempts > 2 ? '<line x1="125" y1="50" x2="225" y2="50" stroke="black" stroke-width="4"/>' : ''}
+                <!-- Sznur -->
+                ${wrongAttempts > 3 ? '<line x1="225" y1="50" x2="225" y2="80" stroke="black" stroke-width="2"/>' : ''}
+                <!-- Głowa -->
+                ${wrongAttempts > 4 ? '<circle cx="225" cy="100" r="20" stroke="black" fill="none" stroke-width="2"/>' : ''}
+                <!-- Tułów -->
+                ${wrongAttempts > 5 ? '<line x1="225" y1="120" x2="225" y2="180" stroke="black" stroke-width="2"/>' : ''}
+                <!-- Ręce -->
+                ${wrongAttempts > 6 ? '<line x1="225" y1="140" x2="200" y2="160" stroke="black" stroke-width="2"/>' : ''}
+                ${wrongAttempts > 6 ? '<line x1="225" y1="140" x2="250" y2="160" stroke="black" stroke-width="2"/>' : ''}
+                <!-- Nogi -->
+                ${wrongAttempts > 7 ? '<line x1="225" y1="180" x2="200" y2="220" stroke="black" stroke-width="2"/>' : ''}
+                ${wrongAttempts > 7 ? '<line x1="225" y1="180" x2="250" y2="220" stroke="black" stroke-width="2"/>' : ''}
+            `;
+        }
+
+        function updateWordDisplay() {
+            const display = currentWord
+                .split('')
+                .map(letter => correctLetters.includes(letter) ? letter : '_')
+                .join(' ');
+            document.getElementById('wordDisplay').textContent = display;
+        }
+
+        function updateLeaderboard() {
+            const list = document.getElementById('scoreList');
+            list.innerHTML = scores
+                .slice(-10)
+                .reverse()
+                .map(score => `<li><strong>${score.player}</strong>: ${score.word}</li>`)
+                .join('');
+        }
+
+        // Pomocnicza funkcja do wyszukiwania przycisków
+        HTMLElement.prototype.contains = function(text) {
+            return this.textContent.includes(text);
+        };
+    </script>
+</body>
+</html>
