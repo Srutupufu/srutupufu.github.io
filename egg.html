@@ -1,176 +1,140 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jajeczne Tło</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egg Boil Background</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --dark-base: #0a0a0a;
+            --egg-shell: #fff5e6;
+            --bubble-blue: #6ec3f4;
+            --steam-white: rgba(255, 255, 255, 0.1);
         }
 
         body {
+            margin: 0;
             min-height: 100vh;
             background: linear-gradient(
-                15deg,
-                #3a2a1e 0%,
-                #2b1e15 100%
+                to bottom,
+                var(--dark-base) 0%,
+                #1a1a1a 100%
             );
-            overflow: hidden;
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* Egg patterns */
         .egg-container {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            padding: 20px;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
         }
 
         .egg {
-            background: linear-gradient(
-                145deg,
-                #fff5e6 0%,
-                #ffe8cc 100%
-            );
+            position: absolute;
+            background: var(--egg-shell);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin: 10px;
-            opacity: 0.9;
-            transition: transform 0.3s ease;
+            transform: rotate(-45deg);
         }
 
-        .steam {
+        /* Bubbles animation */
+        .bubbles {
             position: absolute;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
         }
 
-        .steam-particle {
+        .bubble {
             position: absolute;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0.3) 0%,
-                rgba(255,255,255,0) 100%
-            );
-            border-radius: 50% 20%;
-            filter: blur(5px);
-            animation: steam-float 6s infinite ease-in;
+            background: var(--bubble-blue);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: rise 4s infinite;
+            filter: blur(2px);
         }
 
-        @keyframes steam-float {
+        /* Steam effect */
+        .steam {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 100%, 
+                var(--steam-white) 0%, 
+                transparent 30%);
+            animation: steam-pulse 8s infinite;
+        }
+
+        @keyframes rise {
             0% {
-                transform: translateY(0) scale(0.8);
-                opacity: 0.4;
+                transform: translateY(100vh) scale(0.2);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.3;
             }
             100% {
-                transform: translateY(-100vh) scale(1.5);
+                transform: translateY(-100vh) scale(1);
                 opacity: 0;
             }
         }
 
-        @media (max-width: 768px) {
-            .egg {
-                width: 60px;
-                height: 80px;
-            }
-            .egg-container {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                padding: 10px;
-            }
-            .steam-particle {
-                filter: blur(3px);
-            }
+        @keyframes steam-pulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
         }
 
-        @media (min-width: 769px) {
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
             .egg {
-                width: 100px;
-                height: 130px;
+                transform: rotate(-45deg) scale(0.7);
+            }
+            
+            .bubble {
+                animation-duration: 3s;
             }
         }
     </style>
 </head>
 <body>
-    <div class="egg-container"></div>
+    <!-- Eggs -->
+    <div class="egg-container" id="eggContainer"></div>
+    
+    <!-- Bubbles -->
+    <div class="bubbles" id="bubbles"></div>
+    
+    <!-- Steam -->
     <div class="steam"></div>
 
     <script>
-        // Generowanie jajek w siatce
-        function createEggs() {
-            const container = document.querySelector('.egg-container');
-            const eggCount = Math.floor((window.innerWidth * window.innerHeight) / 15000);
+        // Generate random eggs
+        const eggContainer = document.getElementById('eggContainer');
+        for (let i = 0; i < 15; i++) {
+            const egg = document.createElement('div');
+            egg.className = 'egg';
+            egg.style.width = `${Math.random() * 40 + 20}px`;
+            egg.style.height = `${Math.random() * 50 + 30}px`;
+            egg.style.left = `${Math.random() * 100}%`;
+            egg.style.top = `${Math.random() * 100}%`;
+            egg.style.opacity = Math.random() * 0.3 + 0.1;
+            eggContainer.appendChild(egg);
+        }
+
+        // Generate bubbles
+        const bubbles = document.getElementById('bubbles');
+        setInterval(() => {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.width = bubble.style.height = 
+                `${Math.random() * 15 + 5}px`;
+            bubble.style.animationDelay = `${Math.random() * 2}s`;
+            bubbles.appendChild(bubble);
             
-            for(let i = 0; i < eggCount; i++) {
-                const egg = document.createElement('div');
-                egg.className = 'egg';
-                egg.style.transform = `
-                    rotate(${Math.random() * 15 - 7.5}deg)
-                    translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)
-                `;
-                container.appendChild(egg);
-            }
-        }
-
-        // Animacja pary wodnej
-        class SteamSystem {
-            constructor() {
-                this.steamContainer = document.querySelector('.steam');
-                this.particles = [];
-                this.animate();
-            }
-
-            createParticle() {
-                const particle = document.createElement('div');
-                particle.className = 'steam-particle';
-                
-                const size = 40 + Math.random() * 60;
-                const left = Math.random() * 100;
-                const delay = Math.random() * 4000;
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size * 1.5}px`;
-                particle.style.left = `${left}%`;
-                particle.style.bottom = `${-size}px`;
-                particle.style.animationDelay = `${delay}ms`;
-                
-                this.steamContainer.appendChild(particle);
-                this.particles.push(particle);
-            }
-
-            animate() {
-                if(this.particles.length < 15) {
-                    this.createParticle();
-                }
-                
-                // Usuwanie starych cząsteczek
-                this.particles = this.particles.filter(particle => {
-                    if(parseFloat(particle.style.opacity) <= 0) {
-                        particle.remove();
-                        return false;
-                    }
-                    return true;
-                });
-
-                requestAnimationFrame(() => this.animate());
-            }
-        }
-
-        // Inicjalizacja
-        window.addEventListener('load', () => {
-            createEggs();
-            new SteamSystem();
-        });
-
-        // Responsywność
-        window.addEventListener('resize', () => {
-            document.querySelectorAll('.egg').forEach(egg => egg.remove());
-            createEggs();
-        });
+            setTimeout(() => bubble.remove(), 4000);
+        }, 300);
     </script>
 </body>
 </html>
