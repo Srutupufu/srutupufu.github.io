@@ -3,43 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egg Timer</title>
+    <title>Jajeczne Tło v2</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(135deg, #ffeb3b, #ffffff, #f44336);
+            background: #ffeb3b; /* Żółte tło bazowe */
             position: relative;
         }
 
-        /* Kontener dla animowanych jajek */
-        .egg-container {
+        /* Gradient w tle */
+        .background-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 235, 59, 0.8), rgba(255, 255, 255, 0.6), rgba(244, 67, 54, 0.7));
+            animation: gradientShift 15s ease-in-out infinite;
+        }
+
+        /* Kontener dla jajek */
+        .egg-layer {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
+            overflow: hidden;
         }
 
-        /* Styl jajek */
+        /* Małe jajka */
         .egg {
             position: absolute;
-            width: 60px;
-            height: 80px;
+            width: 20px;
+            height: 25px;
             background: #ffffff;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            animation: float 6s ease-in-out infinite;
+            opacity: 0.8;
+            animation: drift 10s ease-in-out infinite;
         }
 
-        /* Żółtko w jajku */
+        /* Żółtko w jajkach */
         .egg::before {
             content: '';
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 8px;
+            height: 8px;
             background: #ffeb3b;
             border-radius: 50%;
             top: 50%;
@@ -47,75 +57,61 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Różne pozycje jajek */
-        .egg:nth-child(1) {
-            top: 10%;
-            left: 20%;
-            animation-duration: 5s;
-        }
+        /* Rozmieszczenie jajek */
+        .egg:nth-child(1) { top: 10%; left: 15%; animation-duration: 12s; }
+        .egg:nth-child(2) { top: 25%; left: 60%; animation-duration: 9s; }
+        .egg:nth-child(3) { top: 40%; left: 30%; animation-duration: 11s; }
+        .egg:nth-child(4) { top: 55%; left: 80%; animation-duration: 10s; }
+        .egg:nth-child(5) { top: 70%; left: 20%; animation-duration: 13s; }
+        .egg:nth-child(6) { top: 85%; left: 45%; animation-duration: 8s; }
+        .egg:nth-child(7) { top: 15%; left: 90%; animation-duration: 14s; }
 
-        .egg:nth-child(2) {
-            top: 60%;
-            left: 70%;
-            animation-duration: 7s;
-        }
-
-        .egg:nth-child(3) {
-            top: 40%;
-            left: 40%;
-            animation-duration: 6s;
-        }
-
-        /* Czerwone akcenty w tle */
-        .red-blob {
+        /* Czerwone akcenty */
+        .red-accent {
             position: absolute;
-            width: 200px;
-            height: 200px;
-            background: rgba(244, 67, 54, 0.5);
+            width: 150px;
+            height: 150px;
+            background: rgba(244, 67, 54, 0.4);
             border-radius: 50%;
-            filter: blur(50px);
-            animation: pulse 8s ease-in-out infinite;
+            filter: blur(40px);
+            animation: pulse 6s ease-in-out infinite;
         }
 
-        .red-blob:nth-child(1) {
-            top: -10%;
-            left: 10%;
-        }
-
-        .red-blob:nth-child(2) {
-            bottom: -20%;
-            right: 15%;
-        }
+        .red-accent:nth-child(1) { top: 20%; left: 70%; }
+        .red-accent:nth-child(2) { bottom: 10%; left: 10%; }
 
         /* Animacje */
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(5deg);
-            }
-            50% {
-                transform: translateY(-20px) rotate(-5deg);
-            }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(10px, -15px); }
+            50% { transform: translate(-15px, 10px); }
+            75% { transform: translate(5px, 15px); }
         }
 
         @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.5;
-            }
-            50% {
-                transform: scale(1.2);
-                opacity: 0.7;
-            }
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.1); opacity: 0.6; }
         }
     </style>
 </head>
 <body>
-    <div class="egg-container">
+    <div class="background-gradient"></div>
+    <div class="egg-layer">
         <div class="egg"></div>
         <div class="egg"></div>
         <div class="egg"></div>
-        <div class="red-blob"></div>
-        <div class="red-blob"></div>
+        <div class="egg"></div>
+        <div class="egg"></div>
+        <div class="egg"></div>
+        <div class="egg"></div>
+        <div class="red-accent"></div>
+        <div class="red-accent"></div>
     </div>
 </body>
 </html>
