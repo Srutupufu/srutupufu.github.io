@@ -2,8 +2,8 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jajeczna Strona</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jajeczne Tło</title>
     <style>
         * {
             margin: 0;
@@ -14,64 +14,63 @@
         body {
             min-height: 100vh;
             background: linear-gradient(
-                160deg,
-                #fff3e0 0%,
-                #ffe0b2 100%
+                15deg,
+                #3a2a1e 0%,
+                #2b1e15 100%
             );
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
         }
 
-        .egg {
-            position: absolute;
-            background: linear-gradient(
-                145deg,
-                #ffecb3 0%,
-                #ffcc80 100%
-            );
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.2);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .egg::after {
-            content: "";
-            position: absolute;
-            top: 15%;
-            left: 25%;
-            width: 20%;
-            height: 20%;
-            background: radial-gradient(circle, 
-                rgba(255,255,255,0.4) 0%, 
-                rgba(255,255,255,0.1) 70%);
-            border-radius: 50%;
-        }
-
-        .egg:hover {
-            transform: scale(1.05) rotate(3deg);
-        }
-
-        .bubble {
-            position: absolute;
-            background: radial-gradient(circle at 30% 30%, 
-                rgba(255, 87, 34, 0.3) 0%, 
-                rgba(255, 138, 101, 0.2) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            filter: blur(2px);
-        }
-
-        .pattern {
+        .egg-container {
             position: fixed;
             width: 100vw;
             height: 100vh;
-            background-image: radial-gradient(
-                rgba(255, 152, 0, 0.1) 1px, 
-                transparent 1px
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            padding: 20px;
+        }
+
+        .egg {
+            background: linear-gradient(
+                145deg,
+                #fff5e6 0%,
+                #ffe8cc 100%
             );
-            background-size: 20px 20px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 10px;
+            opacity: 0.9;
+            transition: transform 0.3s ease;
+        }
+
+        .steam {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
+        }
+
+        .steam-particle {
+            position: absolute;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.3) 0%,
+                rgba(255,255,255,0) 100%
+            );
+            border-radius: 50% 20%;
+            filter: blur(5px);
+            animation: steam-float 6s infinite ease-in;
+        }
+
+        @keyframes steam-float {
+            0% {
+                transform: translateY(0) scale(0.8);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
         }
 
         @media (max-width: 768px) {
@@ -79,9 +78,12 @@
                 width: 60px;
                 height: 80px;
             }
-            .egg::after {
-                top: 10%;
-                left: 20%;
+            .egg-container {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                padding: 10px;
+            }
+            .steam-particle {
+                filter: blur(3px);
             }
         }
 
@@ -94,76 +96,64 @@
     </style>
 </head>
 <body>
-    <div class="pattern"></div>
+    <div class="egg-container"></div>
+    <div class="steam"></div>
+
     <script>
-        // Tworzenie dynamicznej siatki jajek
+        // Generowanie jajek w siatce
         function createEggs() {
-            const cols = Math.floor(window.innerWidth / 150);
-            const rows = Math.floor(window.innerHeight / 150);
+            const container = document.querySelector('.egg-container');
+            const eggCount = Math.floor((window.innerWidth * window.innerHeight) / 15000);
             
-            for(let i = 0; i < cols * rows; i++) {
+            for(let i = 0; i < eggCount; i++) {
                 const egg = document.createElement('div');
                 egg.className = 'egg';
-                
-                const col = i % cols;
-                const row = Math.floor(i / cols);
-                
-                const x = (col * 150) + Math.random() * 50;
-                const y = (row * 150) + Math.random() * 50;
-                
-                egg.style.left = `${x}px`;
-                egg.style.top = `${y}px`;
-                egg.style.transform = `rotate(${Math.random() * 20 - 10}deg) 
-                    scale(${0.8 + Math.random() * 0.4})`;
-
-                egg.addEventListener('click', () => {
-                    egg.style.animation = 'jump 0.5s ease';
-                    setTimeout(() => egg.style.animation = '', 500);
-                });
-
-                document.body.appendChild(egg);
+                egg.style.transform = `
+                    rotate(${Math.random() * 15 - 7.5}deg)
+                    translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)
+                `;
+                container.appendChild(egg);
             }
         }
 
-        // Animacja bąbelków z różnymi prędkościami
-        class BubbleSystem {
+        // Animacja pary wodnej
+        class SteamSystem {
             constructor() {
-                this.bubbles = [];
+                this.steamContainer = document.querySelector('.steam');
+                this.particles = [];
                 this.animate();
             }
-            
-            addBubble() {
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
+
+            createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'steam-particle';
                 
-                const size = 15 + Math.random() * 25;
-                const speed = 1 + Math.random() * 2;
-                const startX = Math.random() * 100;
+                const size = 40 + Math.random() * 60;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 4000;
                 
-                bubble.style.width = `${size}px`;
-                bubble.style.height = `${size}px`;
-                bubble.style.left = `${startX}%`;
-                bubble.style.bottom = '-50px';
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size * 1.5}px`;
+                particle.style.left = `${left}%`;
+                particle.style.bottom = `${-size}px`;
+                particle.style.animationDelay = `${delay}ms`;
                 
-                document.body.appendChild(bubble);
-                
-                this.bubbles.push({
-                    element: bubble,
-                    y: -50,
-                    speed: speed
-                });
+                this.steamContainer.appendChild(particle);
+                this.particles.push(particle);
             }
 
             animate() {
-                this.bubbles.forEach((bubble, index) => {
-                    bubble.y += bubble.speed;
-                    bubble.element.style.bottom = `${bubble.y}%`;
-                    bubble.element.style.opacity = 1 - (bubble.y + 50) / 150;
-
-                    if(bubble.y > 100) {
-                        bubble.element.remove();
-                        this.bubbles.splice(index, 1);
+                if(this.particles.length < 15) {
+                    this.createParticle();
+                }
+                
+                // Usuwanie starych cząsteczek
+                this.particles = this.particles.filter(particle => {
+                    if(parseFloat(particle.style.opacity) <= 0) {
+                        particle.remove();
+                        return false;
                     }
+                    return true;
                 });
 
                 requestAnimationFrame(() => this.animate());
@@ -173,31 +163,7 @@
         // Inicjalizacja
         window.addEventListener('load', () => {
             createEggs();
-            const bubbleSystem = new BubbleSystem();
-            setInterval(() => bubbleSystem.addBubble(), 300);
-            
-            // Animacja łamania jajka
-            const eggs = document.querySelectorAll('.egg');
-            eggs.forEach(egg => {
-                egg.addEventListener('click', function() {
-                    this.style.background = `linear-gradient(
-                        145deg,
-                        #ffd54f 0%,
-                        #ffb74d 100%
-                    )`;
-                    const crack = document.createElement('div');
-                    crack.style.cssText = `
-                        position: absolute;
-                        width: 80%;
-                        height: 5px;
-                        background: rgba(0,0,0,0.1);
-                        transform: rotate(${Math.random() * 40 - 20}deg);
-                        left: 10%;
-                        top: ${40 + Math.random() * 20}%;
-                    `;
-                    this.appendChild(crack);
-                });
-            });
+            new SteamSystem();
         });
 
         // Responsywność
