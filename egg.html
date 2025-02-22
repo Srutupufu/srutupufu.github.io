@@ -3,157 +3,101 @@
 <head>
 <style>
 :root {
-  --gold-1: #ffd700;
-  --gold-2: #ffaa00;
-  --egg-white: rgba(255, 255, 255, 0.9);
+  --egg-white: rgba(255, 255, 255, 0.15);
+  --egg-glow: rgba(255, 245, 190, 0.2);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(
-    15deg,
-    #fff3e0 0%,
-    #ffe0b2 100%
-  );
-  overflow-x: hidden;
-  position: relative;
-}
-
-.egg-background {
-  position: fixed;
-  width: 100%;
-  height: 100%;
   background: 
-    radial-gradient(circle at 50% 50%, 
-      rgba(255, 255, 255, 0.2) 0%,
-      rgba(255, 255, 255, 0) 70%
-    ),
-    repeating-linear-gradient(
-      45deg,
-      transparent,
+    linear-gradient(160deg, #fff8f0 0%, #fff0e0 100%),
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      transparent 0,
       transparent 15px,
       rgba(255, 255, 255, 0.1) 15px,
       rgba(255, 255, 255, 0.1) 30px
     );
-}
-
-.egg-container {
-  position: absolute;
-  animation: float 8s ease-in-out infinite;
-}
-
-.yolk {
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(
-    circle at 30% 30%,
-    var(--gold-1) 20%,
-    var(--gold-2) 70%,
-    #ff8c00 100%
-  );
-  border-radius: 50%;
+  overflow-x: hidden;
   position: relative;
-  filter: drop-shadow(0 5px 15px rgba(255, 140, 0, 0.3));
 }
 
-.yolk::after {
-  content: '';
-  position: absolute;
-  top: 15%;
-  left: 20%;
-  width: 30%;
-  height: 30%;
-  background: radial-gradient(circle, 
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  border-radius: 50%;
-  transform: rotate(20deg);
-}
-
-.yolk::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, 
-    rgba(0, 0, 0, 0.05) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-30px) rotate(2deg);
-  }
-}
-
-.steam {
+.egg-swarm {
   position: fixed;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  filter: blur(2px);
 }
 
-.steam-particle {
+.egg-particle {
   position: absolute;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.8),
-    rgba(255, 255, 255, 0)
-  );
-  width: 4px;
-  height: 40px;
-  animation: steam-rise 6s infinite;
-  border-radius: 2px;
-  opacity: 0.6;
+  width: 120px;
+  height: 160px;
+  background: 
+    radial-gradient(circle at 50% 30%,
+      var(--egg-white) 20%,
+      transparent 60%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--egg-glow) 0%,
+      transparent 30%
+    );
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  mix-blend-mode: soft-light;
+  animation: egg-float 25s infinite linear;
+  opacity: 0.7;
 }
 
-@keyframes steam-rise {
+@keyframes egg-float {
   0% {
-    transform: translateY(100vh) scale(0.5);
-    opacity: 0;
+    transform: 
+      translateY(0) 
+      rotate(0deg) 
+      scale(0.9);
   }
   50% {
-    opacity: 0.8;
+    transform: 
+      translateY(-20vh) 
+      rotate(180deg) 
+      scale(1.1);
   }
   100% {
-    transform: translateY(-100vh) scale(1.2);
-    opacity: 0;
+    transform: 
+      translateY(-40vh) 
+      rotate(360deg) 
+      scale(0.9);
   }
 }
 
-.crack {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.3);
-  clip-path: polygon(
-    50% 0%, 60% 15%, 100% 25%,
-    85% 40%, 90% 65%, 50% 100%,
-    10% 65%, 15% 40%, 0% 25%, 40% 15%
-  );
-  animation: pulse 2s infinite;
+.light-beam {
+  position: fixed;
+  width: 150%;
+  height: 150%;
+  background: 
+    radial-gradient(circle at 50% 50%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 60%
+    );
+  animation: light-rotate 40s infinite linear;
+  mix-blend-mode: overlay;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+@keyframes light-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
-  .yolk {
-    width: 50px;
-    height: 50px;
+  .egg-particle {
+    width: 80px;
+    height: 110px;
+    animation-duration: 15s;
   }
   
-  .steam-particle {
-    animation-duration: 4s;
+  .light-beam {
+    display: none;
   }
 }
 
@@ -165,64 +109,53 @@ body {
 </style>
 </head>
 <body>
-  <div class="egg-background"></div>
-  
-  <div class="steam" id="steamContainer"></div>
-  
+  <div class="light-beam"></div>
+  <div class="egg-swarm" id="eggSwarm"></div>
+
   <script>
-    function createEggs() {
-      const positions = [
-        {x: 15, y: 20}, {x: 85, y: 30},
-        {x: 40, y: 70}, {x: 70, y: 80}
-      ];
-
-      positions.forEach(pos => {
-        const container = document.createElement('div');
-        container.className = 'egg-container';
-        container.style.left = `${pos.x}%`;
-        container.style.top = `${pos.y}%`;
+    function createEggParticles() {
+      const container = document.getElementById('eggSwarm');
+      const eggCount = window.innerWidth > 768 ? 25 : 12;
+      
+      for(let i = 0; i < eggCount; i++) {
+        const egg = document.createElement('div');
+        egg.className = 'egg-particle';
         
-        const yolk = document.createElement('div');
-        yolk.className = 'yolk';
+        // Losowe pozycje z kontrolą nakładania
+        egg.style.left = `${Math.random() * 100}%`;
+        egg.style.top = `${Math.random() * 100}%`;
         
-        // Add cracks
-        if(Math.random() > 0.5) {
-          const crack = document.createElement('div');
-          crack.className = 'crack';
-          crack.style.top = `${Math.random() * 70 + 15}%`;
-          crack.style.left = `${Math.random() * 70 + 15}%`;
-          yolk.appendChild(crack);
-        }
+        // Losowe parametry animacji
+        egg.style.animationDelay = `${Math.random() * 20}s`;
+        egg.style.animationDuration = `${15 + Math.random() * 15}s`;
+        egg.style.transform = `scale(${0.7 + Math.random() * 0.5})`;
         
-        container.appendChild(yolk);
-        document.body.appendChild(container);
-      });
-    }
-
-    function createSteam() {
-      const container = document.getElementById('steamContainer');
-      for(let i = 0; i < 15; i++) {
-        const steam = document.createElement('div');
-        steam.className = 'steam-particle';
-        steam.style.left = `${Math.random() * 100}%`;
-        steam.style.animationDelay = `${Math.random() * 3}s`;
-        steam.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
-        container.appendChild(steam);
+        container.appendChild(egg);
       }
     }
 
-    window.addEventListener('load', () => {
-      createEggs();
-      createSteam();
+    // Interakcja z ruchem myszy
+    document.addEventListener('mousemove', (e) => {
+      const eggs = document.querySelectorAll('.egg-particle');
+      const mouseX = e.clientX / window.innerWidth - 0.5;
+      const mouseY = e.clientY / window.innerHeight - 0.5;
+      
+      eggs.forEach((egg, index) => {
+        const delay = index * 0.02;
+        const moveX = mouseX * 20;
+        const moveY = mouseY * 20;
+        
+        egg.style.transform = `
+          translate(${moveX}px, ${moveY}px)
+          rotate(${moveX * 2}deg)
+        `;
+      });
     });
 
-    // Dynamiczny ruch przy scrollu
-    window.addEventListener('scroll', () => {
-      const speed = 0.3;
-      document.querySelectorAll('.egg-container').forEach(egg => {
-        const rect = egg.getBoundingClientRect();
-        egg.style.transform = `translateY(${window.scrollY * speed}px)`;
-      });
+    window.addEventListener('load', createEggParticles);
+    window.addEventListener('resize', () => {
+      document.getElementById('eggSwarm').innerHTML = '';
+      createEggParticles();
     });
   </script>
 </body>
