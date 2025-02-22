@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jajeczne tło</title>
+    <title>Jajeczna Strona</title>
     <style>
         * {
             margin: 0;
@@ -14,115 +14,197 @@
         body {
             min-height: 100vh;
             background: linear-gradient(
-                45deg,
-                #2d1a0f 0%,
-                #1f1209 100%
+                160deg,
+                #fff3e0 0%,
+                #ffe0b2 100%
             );
             overflow: hidden;
+            font-family: 'Arial', sans-serif;
         }
 
         .egg {
             position: absolute;
             background: linear-gradient(
                 145deg,
-                rgba(255, 230, 200, 0.1) 0%,
-                rgba(255, 210, 180, 0.05) 100%
+                #ffecb3 0%,
+                #ffcc80 100%
             );
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            backdrop-filter: blur(2px);
-            box-shadow: 0 0 15px rgba(255, 185, 90, 0.1);
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.2);
+            transition: transform 0.3s ease;
+            cursor: pointer;
         }
 
         .egg::after {
             content: "";
             position: absolute;
-            top: 20%;
-            left: 30%;
-            width: 15%;
-            height: 15%;
-            background: rgba(255, 255, 255, 0.1);
+            top: 15%;
+            left: 25%;
+            width: 20%;
+            height: 20%;
+            background: radial-gradient(circle, 
+                rgba(255,255,255,0.4) 0%, 
+                rgba(255,255,255,0.1) 70%);
             border-radius: 50%;
+        }
+
+        .egg:hover {
+            transform: scale(1.05) rotate(3deg);
         }
 
         .bubble {
             position: absolute;
             background: radial-gradient(circle at 30% 30%, 
-                rgba(255, 255, 255, 0.3) 0%, 
-                rgba(255, 255, 255, 0.1) 70%);
+                rgba(255, 87, 34, 0.3) 0%, 
+                rgba(255, 138, 101, 0.2) 70%);
             border-radius: 50%;
+            pointer-events: none;
+            filter: blur(2px);
+        }
+
+        .pattern {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background-image: radial-gradient(
+                rgba(255, 152, 0, 0.1) 1px, 
+                transparent 1px
+            );
+            background-size: 20px 20px;
             pointer-events: none;
         }
 
         @media (max-width: 768px) {
             .egg {
-                width: 70px;
-                height: 90px;
+                width: 60px;
+                height: 80px;
+            }
+            .egg::after {
+                top: 10%;
+                left: 20%;
             }
         }
 
         @media (min-width: 769px) {
             .egg {
-                width: 120px;
-                height: 150px;
+                width: 100px;
+                height: 130px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="pattern"></div>
     <script>
-        // Tworzenie jajek
-        const eggPositions = [
-            { top: 15, left: 10, scale: 0.8 },
-            { top: 25, left: 80, scale: 1.1 },
-            { top: 60, left: 20, scale: 0.9 },
-            { top: 70, left: 70, scale: 1.2 }
-        ];
-
-        eggPositions.forEach(pos => {
-            const egg = document.createElement('div');
-            egg.className = 'egg';
-            egg.style.top = `${pos.top}%`;
-            egg.style.left = `${pos.left}%`;
-            egg.style.transform = `scale(${pos.scale})`;
-            document.body.appendChild(egg);
-        });
-
-        // Animacja bąbelków
-        function createBubble() {
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
+        // Tworzenie dynamicznej siatki jajek
+        function createEggs() {
+            const cols = Math.floor(window.innerWidth / 150);
+            const rows = Math.floor(window.innerHeight / 150);
             
-            const size = Math.random() * 20 + 10;
-            const left = Math.random() * 100;
-            
-            bubble.style.width = `${size}px`;
-            bubble.style.height = `${size}px`;
-            bubble.style.left = `${left}%`;
-            bubble.style.bottom = '-50px';
-            
-            document.body.appendChild(bubble);
-
-            // Animacja
-            let start = null;
-            function animate(timestamp) {
-                if (!start) start = timestamp;
-                const progress = timestamp - start;
+            for(let i = 0; i < cols * rows; i++) {
+                const egg = document.createElement('div');
+                egg.className = 'egg';
                 
-                bubble.style.bottom = `${-50 + (progress / 20)}%`;
-                bubble.style.opacity = 1 - (progress / 3000);
+                const col = i % cols;
+                const row = Math.floor(i / cols);
                 
-                if (progress < 3000) {
-                    requestAnimationFrame(animate);
-                } else {
-                    bubble.remove();
-                }
+                const x = (col * 150) + Math.random() * 50;
+                const y = (row * 150) + Math.random() * 50;
+                
+                egg.style.left = `${x}px`;
+                egg.style.top = `${y}px`;
+                egg.style.transform = `rotate(${Math.random() * 20 - 10}deg) 
+                    scale(${0.8 + Math.random() * 0.4})`;
+
+                egg.addEventListener('click', () => {
+                    egg.style.animation = 'jump 0.5s ease';
+                    setTimeout(() => egg.style.animation = '', 500);
+                });
+
+                document.body.appendChild(egg);
             }
-
-            requestAnimationFrame(animate);
         }
 
-        // Regularne tworzenie bąbelków
-        setInterval(createBubble, 500);
+        // Animacja bąbelków z różnymi prędkościami
+        class BubbleSystem {
+            constructor() {
+                this.bubbles = [];
+                this.animate();
+            }
+            
+            addBubble() {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                
+                const size = 15 + Math.random() * 25;
+                const speed = 1 + Math.random() * 2;
+                const startX = Math.random() * 100;
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${startX}%`;
+                bubble.style.bottom = '-50px';
+                
+                document.body.appendChild(bubble);
+                
+                this.bubbles.push({
+                    element: bubble,
+                    y: -50,
+                    speed: speed
+                });
+            }
+
+            animate() {
+                this.bubbles.forEach((bubble, index) => {
+                    bubble.y += bubble.speed;
+                    bubble.element.style.bottom = `${bubble.y}%`;
+                    bubble.element.style.opacity = 1 - (bubble.y + 50) / 150;
+
+                    if(bubble.y > 100) {
+                        bubble.element.remove();
+                        this.bubbles.splice(index, 1);
+                    }
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Inicjalizacja
+        window.addEventListener('load', () => {
+            createEggs();
+            const bubbleSystem = new BubbleSystem();
+            setInterval(() => bubbleSystem.addBubble(), 300);
+            
+            // Animacja łamania jajka
+            const eggs = document.querySelectorAll('.egg');
+            eggs.forEach(egg => {
+                egg.addEventListener('click', function() {
+                    this.style.background = `linear-gradient(
+                        145deg,
+                        #ffd54f 0%,
+                        #ffb74d 100%
+                    )`;
+                    const crack = document.createElement('div');
+                    crack.style.cssText = `
+                        position: absolute;
+                        width: 80%;
+                        height: 5px;
+                        background: rgba(0,0,0,0.1);
+                        transform: rotate(${Math.random() * 40 - 20}deg);
+                        left: 10%;
+                        top: ${40 + Math.random() * 20}%;
+                    `;
+                    this.appendChild(crack);
+                });
+            });
+        });
+
+        // Responsywność
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.egg').forEach(egg => egg.remove());
+            createEggs();
+        });
     </script>
 </body>
 </html>
