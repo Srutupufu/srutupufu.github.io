@@ -3,100 +3,128 @@
 <head>
 <style>
 :root {
-  --egg-white: rgba(255, 255, 255, 0.15);
-  --egg-glow: rgba(255, 245, 190, 0.2);
+  --golden-yellow: #ffd700;
+  --soft-orange: #ff8c00;
+  --eggshell: #f4f1de;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background: 
-    linear-gradient(160deg, #fff8f0 0%, #fff0e0 100%),
-    repeating-radial-gradient(
-      circle at 50% 50%,
-      transparent 0,
-      transparent 15px,
-      rgba(255, 255, 255, 0.1) 15px,
-      rgba(255, 255, 255, 0.1) 30px
+    radial-gradient(circle at 50% 100%, 
+      #fff0d0 0%,
+      #ffe4b5 100%
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.1) 2px,
+      rgba(255,255,255,0.1) 4px
     );
   overflow-x: hidden;
   position: relative;
 }
 
-.egg-swarm {
+.egg-matrix {
   position: fixed;
   width: 100%;
   height: 100%;
-  filter: blur(2px);
+  pointer-events: none;
+  filter: blur(1px);
 }
 
-.egg-particle {
+.egg-silhouette {
   position: absolute;
-  width: 120px;
-  height: 160px;
+  width: 150px;
+  height: 200px;
   background: 
     radial-gradient(circle at 50% 30%,
-      var(--egg-white) 20%,
-      transparent 60%
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.1) 70%
     ),
     linear-gradient(
-      to bottom,
-      var(--egg-glow) 0%,
-      transparent 30%
+      to bottom right,
+      transparent 40%,
+      rgba(255, 215, 0, 0.2) 100%
     );
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  mix-blend-mode: soft-light;
-  animation: egg-float 25s infinite linear;
-  opacity: 0.7;
+  mix-blend-mode: multiply;
+  animation: egg-drift 30s infinite linear;
+  opacity: 0.8;
+  box-shadow: 
+    0 10px 30px rgba(255, 140, 0, 0.1),
+    inset 0 -10px 20px rgba(255, 255, 255, 0.3);
 }
 
-@keyframes egg-float {
+@keyframes egg-drift {
   0% {
     transform: 
       translateY(0) 
       rotate(0deg) 
-      scale(0.9);
+      scale(1);
   }
   50% {
     transform: 
       translateY(-20vh) 
       rotate(180deg) 
-      scale(1.1);
+      scale(1.2);
   }
   100% {
     transform: 
       translateY(-40vh) 
       rotate(360deg) 
-      scale(0.9);
+      scale(1);
   }
 }
 
-.light-beam {
+.glow-effect {
   position: fixed;
-  width: 150%;
-  height: 150%;
-  background: 
-    radial-gradient(circle at 50% 50%,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 60%
-    );
-  animation: light-rotate 40s infinite linear;
-  mix-blend-mode: overlay;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(255, 215, 0, 0.1) 0%,
+    transparent 60%
+  );
+  animation: glow-pulse 8s infinite;
+  mix-blend-mode: soft-light;
 }
 
-@keyframes light-rotate {
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.steam-plume {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-radial-gradient(circle at 50% 50%,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.05) 10px,
+      rgba(255, 255, 255, 0.05) 20px
+    );
+  animation: steam-move 20s infinite linear;
+}
+
+@keyframes steam-move {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
-  .egg-particle {
-    width: 80px;
-    height: 110px;
-    animation-duration: 15s;
+  .egg-silhouette {
+    width: 100px;
+    height: 140px;
+    animation-duration: 20s;
   }
   
-  .light-beam {
+  .glow-effect {
     display: none;
   }
 }
@@ -109,53 +137,53 @@ body {
 </style>
 </head>
 <body>
-  <div class="light-beam"></div>
-  <div class="egg-swarm" id="eggSwarm"></div>
+  <div class="glow-effect"></div>
+  <div class="steam-plume"></div>
+  <div class="egg-matrix" id="eggMatrix"></div>
 
   <script>
-    function createEggParticles() {
-      const container = document.getElementById('eggSwarm');
-      const eggCount = window.innerWidth > 768 ? 25 : 12;
+    function createEggMatrix() {
+      const container = document.getElementById('eggMatrix');
+      const density = window.innerWidth > 768 ? 0.0003 : 0.00015;
+      const eggCount = Math.floor(window.innerWidth * window.innerHeight * density);
       
       for(let i = 0; i < eggCount; i++) {
         const egg = document.createElement('div');
-        egg.className = 'egg-particle';
+        egg.className = 'egg-silhouette';
         
-        // Losowe pozycje z kontrolą nakładania
+        // Losowe parametry
         egg.style.left = `${Math.random() * 100}%`;
-        egg.style.top = `${Math.random() * 100}%`;
-        
-        // Losowe parametry animacji
-        egg.style.animationDelay = `${Math.random() * 20}s`;
-        egg.style.animationDuration = `${15 + Math.random() * 15}s`;
-        egg.style.transform = `scale(${0.7 + Math.random() * 0.5})`;
+        egg.style.top = `${Math.random() * 150 - 25}%`;
+        egg.style.animationDelay = `${Math.random() * 30}s`;
+        egg.style.animationDuration = `${20 + Math.random() * 20}s`;
+        egg.style.opacity = 0.5 + Math.random() * 0.3;
+        egg.style.transform = `scale(${0.8 + Math.random() * 0.4})`;
         
         container.appendChild(egg);
       }
     }
 
-    // Interakcja z ruchem myszy
+    // Interakcja parallaksowa
     document.addEventListener('mousemove', (e) => {
-      const eggs = document.querySelectorAll('.egg-particle');
-      const mouseX = e.clientX / window.innerWidth - 0.5;
-      const mouseY = e.clientY / window.innerHeight - 0.5;
+      const eggs = document.querySelectorAll('.egg-silhouette');
+      const mouseX = (e.clientX / window.innerWidth - 0.5) * 20;
+      const mouseY = (e.clientY / window.innerHeight - 0.5) * 20;
       
-      eggs.forEach((egg, index) => {
-        const delay = index * 0.02;
-        const moveX = mouseX * 20;
-        const moveY = mouseY * 20;
-        
-        egg.style.transform = `
-          translate(${moveX}px, ${moveY}px)
-          rotate(${moveX * 2}deg)
-        `;
+      eggs.forEach(egg => {
+        const speed = parseFloat(egg.style.opacity) * 0.5;
+        requestAnimationFrame(() => {
+          egg.style.transform = `
+            translate(${mouseX * speed}px, ${mouseY * speed}px)
+            scale(${1 + speed * 0.1})
+          `;
+        });
       });
     });
 
-    window.addEventListener('load', createEggParticles);
+    window.addEventListener('load', createEggMatrix);
     window.addEventListener('resize', () => {
-      document.getElementById('eggSwarm').innerHTML = '';
-      createEggParticles();
+      document.getElementById('eggMatrix').innerHTML = '';
+      createEggMatrix();
     });
   </script>
 </body>
