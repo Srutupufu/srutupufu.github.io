@@ -3,12 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gotowanie Jajek</title>
+    <title>Perfekcyjne Jajka</title>
     <style>
+        :root {
+            --primary-color: #FFA726;
+            --secondary-color: #FFF3E0;
+            --accent-color: #FF7043;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow-x: hidden;
         }
 
         .background-container {
@@ -17,101 +28,216 @@
             height: 100vh;
             overflow: hidden;
             z-index: -1;
-            background: linear-gradient(45deg, #fff7e6, #ffecd2);
+            background: linear-gradient(160deg, var(--secondary-color) 0%, #fff7e6 100%);
         }
 
-        /* Animowane cząsteczki "pary" */
-        .particle {
+        /* Animowana para */
+        .steam {
             position: absolute;
-            background: rgba(255, 255, 255, 0.8);
+            width: 100%;
+            height: 100%;
+        }
+
+        .steam-particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
-            animation: float 6s infinite ease-in-out;
+            filter: blur(2px);
+            animation: steam-float 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Główna animacja jajka */
-        .egg-animation {
+        /* Główna scena gotowania */
+        .cooking-scene {
             position: absolute;
-            width: 150px;
-            left: 50%;
-            bottom: 30%;
-            transform: translateX(-50%);
-            animation: egg-float 3s ease-in-out infinite;
+            width: 100%;
+            height: 60%;
+            bottom: 0;
+            left: 0;
         }
 
-        /* Animacja bryzgania oleju */
-        .sizzle {
+        /* Animowana patelnia */
+        .pan-container {
+            position: absolute;
+            width: 300px;
+            left: 50%;
+            bottom: 15%;
+            transform: translateX(-50%);
+            perspective: 1000px;
+        }
+
+        .pan {
+            width: 100%;
+            filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.1));
+            animation: pan-tilt 4s ease-in-out infinite;
+        }
+
+        /* Jajka w patelni */
+        .egg {
+            position: absolute;
+            width: 80px;
+            animation: egg-sizzle 2s infinite ease-in-out;
+            transition: transform 0.3s;
+        }
+
+        .egg:nth-child(1) { left: 35%; bottom: 28%; }
+        .egg:nth-child(2) { left: 50%; bottom: 25%; }
+        .egg:nth-child(3) { left: 65%; bottom: 30%; }
+
+        /* Efekt bryzgania */
+        .sizzle-effect {
             position: absolute;
             width: 200px;
             height: 200px;
-            background: radial-gradient(circle, rgba(255,230,0,0.3) 0%, rgba(255,230,0,0) 70%);
-            animation: sizzle 1.5s infinite;
-            opacity: 0;
+            background: radial-gradient(circle, 
+                rgba(255, 152, 0, 0.15) 0%, 
+                rgba(255, 152, 0, 0) 70%);
+            animation: sizzle 1.8s infinite;
+            mix-blend-mode: multiply;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.05); }
+        /* Tekstura tła */
+        .noise-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
         }
 
-        @keyframes egg-float {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, -15px); }
+        /* Animacje */
+        @keyframes steam-float {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            50% { transform: translateY(-100px) scale(1.2); opacity: 0.6; }
+            100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes pan-tilt {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1.5deg); }
+            75% { transform: rotate(-1.5deg); }
+        }
+
+        @keyframes egg-sizzle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
         }
 
         @keyframes sizzle {
-            0% { opacity: 0; transform: scale(0); }
+            0% { opacity: 0; transform: scale(0.5); }
             50% { opacity: 1; }
-            100% { opacity: 0; transform: scale(2); }
+            100% { opacity: 0; transform: scale(2.5); }
         }
 
         /* Responsywność */
         @media (max-width: 768px) {
-            .egg-animation {
-                width: 100px;
-                bottom: 25%;
-            }
-
-            .sizzle {
-                width: 150px;
-                height: 150px;
+            .pan-container { width: 200px; }
+            .egg { width: 60px; }
+            .sizzle-effect { width: 150px; height: 150px; }
+            
+            .cooking-scene {
+                height: 50%;
+                bottom: 10%;
             }
         }
 
-        /* Dodatkowe elementy dekoracyjne */
-        .pan {
-            position: absolute;
-            width: 250px;
-            left: 50%;
-            bottom: 20%;
-            transform: translateX(-50%);
-            animation: pan-sizzle 2s ease-in-out infinite;
+        @media (max-width: 480px) {
+            .pan-container { width: 180px; }
+            .egg { width: 50px; }
+            
+            .egg:nth-child(1) { left: 30%; }
+            .egg:nth-child(2) { left: 50%; }
+            .egg:nth-child(3) { left: 70%; }
         }
 
-        @keyframes pan-sizzle {
-            0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
-            25% { transform: translate(-50%, -2px) rotate(1deg); }
-            75% { transform: translate(-50%, 2px) rotate(-1deg); }
+        /* Efekty interaktywne */
+        @media (hover: hover) {
+            .egg:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+
+        /* Tryb redukcji ruchu */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 <body>
     <div class="background-container">
-        <!-- Cząsteczki pary -->
-        <div class="particle" style="top: 10%; left: 20%; width: 8px; height: 8px; animation-delay: 0s;"></div>
-        <div class="particle" style="top: 30%; left: 70%; width: 12px; height: 12px; animation-delay: 1s;"></div>
-        <div class="particle" style="top: 50%; left: 40%; width: 6px; height: 6px; animation-delay: 2s;"></div>
+        <div class="noise-overlay"></div>
         
-        <!-- Animowane jajko -->
-        <img src="https://cdn-icons-png.flaticon.com/512/271/271517.png" alt="jajko" class="egg-animation">
-        
-        <!-- Patelnia -->
-        <img src="https://www.svgrepo.com/show/362356/pan.svg" alt="patelnia" class="pan">
-        
-        <!-- Efekt bryzgania -->
-        <div class="sizzle" style="left: 45%; top: 60%;"></div>
-        <div class="sizzle" style="left: 55%; top: 65%; animation-delay: 0.5s;"></div>
+        <!-- Para -->
+        <div class="steam">
+            <!-- Cząsteczki generowane przez JavaScript -->
+        </div>
+
+        <!-- Główna scena -->
+        <div class="cooking-scene">
+            <div class="pan-container">
+                <img src="https://www.svgrepo.com/show/362356/pan.svg" alt="patelnia" class="pan">
+                
+                <!-- Jajka -->
+                <img src="https://www.svgrepo.com/show/309651/egg.svg" alt="jajko" class="egg">
+                <img src="https://www.svgrepo.com/show/309651/egg.svg" alt="jajko" class="egg">
+                <img src="https://www.svgrepo.com/show/309651/egg.svg" alt="jajko" class="egg">
+                
+                <!-- Efekty bryzgania -->
+                <div class="sizzle-effect" style="left: 40%; top: 50%;"></div>
+                <div class="sizzle-effect" style="left: 60%; top: 55%; animation-delay: 0.8s;"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Tutaj możesz dodać treść strony -->
+    <!-- Tutaj treść strony -->
+
+    <script>
+        // Generowanie dynamicznej pary
+        function createSteamParticles() {
+            const steamContainer = document.querySelector('.steam');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'steam-particle';
+                
+                const size = Math.random() * 15 + 5;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 3 + 5;
+
+                particle.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${left}%;
+                    animation-delay: ${delay}s;
+                    animation-duration: ${duration}s;
+                `;
+
+                steamContainer.appendChild(particle);
+            }
+        }
+
+        // Inicjalizacja
+        window.addEventListener('DOMContentLoaded', () => {
+            createSteamParticles();
+            
+            // Interakcja z jajkiem
+            document.querySelectorAll('.egg').forEach(egg => {
+                egg.addEventListener('click', () => {
+                    egg.style.transform = 'scale(1.2) rotate(15deg)';
+                    setTimeout(() => {
+                        egg.style.transform = '';
+                    }, 500);
+                });
+            });
+        });
+
+        // Responsywna aktualizacja
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.steam-particle').forEach(p => p.remove());
+            createSteamParticles();
+        });
+    </script>
 </body>
 </html>
