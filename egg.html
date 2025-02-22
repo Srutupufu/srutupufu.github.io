@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hypnotic Egg Background</title>
+    <title>Ciemne tło z motywami jajek</title>
     <style>
         * {
             margin: 0;
@@ -12,106 +12,112 @@
         }
 
         body {
-            background: linear-gradient(160deg, #fff0e6 0%, #ffecd2 50%, #ffe6bf 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            background: linear-gradient(
+                45deg,
+                #1a1a1a 0%,
+                #0d0d0d 100%
+            );
             position: relative;
+            overflow: hidden;
         }
 
-        .egg-container {
+        .background {
             position: fixed;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0.3;
+        }
+
+        /* Animacja wrzenia wody */
+        .bubbles {
+            position: absolute;
             width: 100%;
             height: 100%;
-            filter: url(#goo);
+            animation: boil 20s infinite linear;
         }
 
-        /* Realistyczne jajka */
+        @keyframes boil {
+            0% { background-position: 0 0; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .bubbles::after {
+            content: "";
+            position: absolute;
+            bottom: -50px;
+            left: -10%;
+            width: 120%;
+            height: 50px;
+            background: radial-gradient(
+                circle at 75% 50%,
+                rgba(255, 255, 255, 0.1) 10%,
+                transparent 40%
+            );
+            animation: bubbles 3s infinite ease-in;
+        }
+
+        @keyframes bubbles {
+            0% { transform: translateY(0); opacity: 0.3; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        /* Motyw jajek */
         .egg {
             position: absolute;
-            width: 120px;
-            height: 160px;
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.05) 0%,
+                rgba(255, 255, 255, 0.02) 100%
+            );
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: 0 8px 30px rgba(255, 235, 205, 0.3);
-            animation: float 8s ease-in-out infinite;
-            transform-origin: 50% 100%;
+            backdrop-filter: blur(2px);
         }
 
-        /* Animacja pary wodnej */
-        .steam {
+        .egg::after {
+            content: "";
             position: absolute;
-            width: 80px;
-            height: 200px;
-            background: linear-gradient(to top, 
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                rgba(255, 255, 255, 0) 100%);
-            animation: steam 4s infinite ease-out;
-            mask-image: linear-gradient(to top, transparent 0%, black 20%);
-            -webkit-mask-image: linear-gradient(to top, transparent 0%, black 20%);
-            opacity: 0.7;
-            filter: blur(15px);
+            top: 20%;
+            left: 30%;
+            width: 15%;
+            height: 15%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
         }
 
-        /* Animacje */
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
-        }
-
-        @keyframes steam {
-            0% { transform: translateY(0) scaleY(0.5); opacity: 0; }
-            50% { transform: translateY(-100px) scaleY(1.2); opacity: 0.6; }
-            100% { transform: translateY(-200px) scaleY(0.8); opacity: 0; }
-        }
-
-        /* Responsywny layout */
+        /* Responsywne rozmieszczenie elementów */
         @media (max-width: 768px) {
             .egg {
                 width: 80px;
-                height: 110px;
+                height: 100px;
             }
-            .steam {
-                width: 50px;
-                height: 150px;
-            }
+            
+            .egg:nth-child(1) { top: 10%; left: 5%; }
+            .egg:nth-child(2) { top: 30%; right: 7%; }
+            .egg:nth-child(3) { bottom: 20%; left: 15%; }
+            .egg:nth-child(4) { bottom: 40%; right: 20%; }
         }
 
-        /* Pozycjonowanie elementów */
-        .egg:nth-child(1) { left: 15%; top: 30%; animation-delay: 0s; }
-        .egg:nth-child(2) { left: 35%; top: 50%; animation-delay: 1.5s; }
-        .egg:nth-child(3) { left: 65%; top: 40%; animation-delay: 2.5s; }
-        .egg:nth-child(4) { left: 80%; top: 25%; animation-delay: 3.5s; }
-
-        .steam:nth-child(5) { left: 20%; animation-delay: 0.5s; }
-        .steam:nth-child(6) { left: 40%; animation-delay: 1s; }
-        .steam:nth-child(7) { left: 70%; animation-delay: 2s; }
-        .steam:nth-child(8) { left: 85%; animation-delay: 3s; }
+        @media (min-width: 769px) {
+            .egg {
+                width: 120px;
+                height: 150px;
+            }
+            
+            .egg:nth-child(1) { top: 15%; left: 10%; }
+            .egg:nth-child(2) { top: 25%; right: 12%; }
+            .egg:nth-child(3) { bottom: 25%; left: 20%; }
+            .egg:nth-child(4) { bottom: 35%; right: 25%; }
+        }
     </style>
-    <!-- SVG filter dla efektu "mokrego" -->
-    <svg style="visibility: hidden; position: absolute;">
-        <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="
-                1 0 0 0 0  
-                0 1 0 0 0  
-                0 0 1 0 0  
-                0 0 0 18 -7" result="goo" />
-            <feBlend in="SourceGraphic" in2="goo" />
-        </filter>
-    </svg>
 </head>
 <body>
-    <div class="egg-container">
+    <div class="background">
+        <div class="bubbles"></div>
         <div class="egg"></div>
         <div class="egg"></div>
         <div class="egg"></div>
         <div class="egg"></div>
-        
-        <div class="steam"></div>
-        <div class="steam"></div>
-        <div class="steam"></div>
-        <div class="steam"></div>
     </div>
 </body>
 </html>
