@@ -3,145 +3,226 @@
 <head>
 <style>
 :root {
-  --primary-yellow: #fff7e6;
-  --accent-orange: #ffd8a8;
+  --gold-1: #ffd700;
+  --gold-2: #ffaa00;
+  --egg-white: rgba(255, 255, 255, 0.9);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background: linear-gradient(
-    135deg,
-    var(--primary-yellow),
-    var(--accent-orange)
+    15deg,
+    #fff3e0 0%,
+    #ffe0b2 100%
   );
-  position: relative;
   overflow-x: hidden;
+  position: relative;
 }
 
-.eggshell-texture {
+.egg-background {
   position: fixed;
   width: 100%;
   height: 100%;
-  background-image: url('data:image/png;base64,iVBORw0KGgo...'); /* Tutaj wstaw base64 dla półprzezroczystej tekstury skorupki jajka */
-  opacity: 0.1;
-  z-index: 1;
+  background: 
+    radial-gradient(circle at 50% 50%, 
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 15px,
+      rgba(255, 255, 255, 0.1) 15px,
+      rgba(255, 255, 255, 0.1) 30px
+    );
 }
 
-.animated-egg {
+.egg-container {
   position: absolute;
-  animation: float 12s ease-in-out infinite;
-  opacity: 0.8;
+  animation: float 8s ease-in-out infinite;
 }
 
-.animated-egg.yolk {
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(#ffd700 30%, #ffaa00 70%);
+.yolk {
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--gold-1) 20%,
+    var(--gold-2) 70%,
+    #ff8c00 100%
+  );
   border-radius: 50%;
-  filter: blur(2px);
+  position: relative;
+  filter: drop-shadow(0 5px 15px rgba(255, 140, 0, 0.3));
+}
+
+.yolk::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  width: 30%;
+  height: 30%;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  border-radius: 50%;
+  transform: rotate(20deg);
+}
+
+.yolk::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, 
+    rgba(0, 0, 0, 0.05) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(-2deg);
   }
   50% {
-    transform: translateY(-40px) rotate(180deg);
+    transform: translateY(-30px) rotate(2deg);
   }
 }
 
-/* Animowane bąbelki */
-.bubbles {
+.steam {
   position: fixed;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
 
-.bubble {
+.steam-particle {
   position: absolute;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  animation: bubble-rise 8s infinite;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0)
+  );
+  width: 4px;
+  height: 40px;
+  animation: steam-rise 6s infinite;
+  border-radius: 2px;
+  opacity: 0.6;
 }
 
-@keyframes bubble-rise {
+@keyframes steam-rise {
   0% {
-    transform: translateY(100vh) scale(0.2);
+    transform: translateY(100vh) scale(0.5);
     opacity: 0;
   }
   50% {
-    opacity: 0.4;
+    opacity: 0.8;
   }
   100% {
-    transform: translateY(-100vh) scale(1);
+    transform: translateY(-100vh) scale(1.2);
     opacity: 0;
   }
 }
 
-/* Responsywność */
+.crack {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  clip-path: polygon(
+    50% 0%, 60% 15%, 100% 25%,
+    85% 40%, 90% 65%, 50% 100%,
+    10% 65%, 15% 40%, 0% 25%, 40% 15%
+  );
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 @media (max-width: 768px) {
-  .animated-egg {
-    display: none;
+  .yolk {
+    width: 50px;
+    height: 50px;
   }
   
-  .bubble {
-    animation-duration: 6s;
+  .steam-particle {
+    animation-duration: 4s;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animated-egg, .bubble {
+  * {
     animation: none !important;
   }
 }
 </style>
 </head>
 <body>
-  <div class="eggshell-texture"></div>
+  <div class="egg-background"></div>
   
-  <div class="bubbles" id="bubblesContainer"></div>
+  <div class="steam" id="steamContainer"></div>
   
-  <!-- Dynamicznie generowane animowane elementy -->
   <script>
-    // Generowanie bąbelków
-    function createBubbles() {
-      const container = document.getElementById('bubblesContainer');
-      for (let i = 0; i < 20; i++) {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        bubble.style.left = `${Math.random() * 100}%`;
-        bubble.style.width = bubble.style.height = `${Math.random() * 10 + 5}px`;
-        bubble.style.animationDelay = `${Math.random() * 5}s`;
-        container.appendChild(bubble);
-      }
+    function createEggs() {
+      const positions = [
+        {x: 15, y: 20}, {x: 85, y: 30},
+        {x: 40, y: 70}, {x: 70, y: 80}
+      ];
+
+      positions.forEach(pos => {
+        const container = document.createElement('div');
+        container.className = 'egg-container';
+        container.style.left = `${pos.x}%`;
+        container.style.top = `${pos.y}%`;
+        
+        const yolk = document.createElement('div');
+        yolk.className = 'yolk';
+        
+        // Add cracks
+        if(Math.random() > 0.5) {
+          const crack = document.createElement('div');
+          crack.className = 'crack';
+          crack.style.top = `${Math.random() * 70 + 15}%`;
+          crack.style.left = `${Math.random() * 70 + 15}%`;
+          yolk.appendChild(crack);
+        }
+        
+        container.appendChild(yolk);
+        document.body.appendChild(container);
+      });
     }
 
-    // Generowanie animowanych jaj
-    function createEggs() {
-      const colors = ['#ffd700', '#ffaa00', '#ffffff'];
-      for (let i = 0; i < 5; i++) {
-        const egg = document.createElement('div');
-        egg.className = `animated-egg ${i % 2 === 0 ? 'yolk' : 'white'}`;
-        egg.style.left = `${Math.random() * 100}%`;
-        egg.style.top = `${Math.random() * 100}%`;
-        egg.style.animationDelay = `${Math.random() * 5}s`;
-        document.body.appendChild(egg);
+    function createSteam() {
+      const container = document.getElementById('steamContainer');
+      for(let i = 0; i < 15; i++) {
+        const steam = document.createElement('div');
+        steam.className = 'steam-particle';
+        steam.style.left = `${Math.random() * 100}%`;
+        steam.style.animationDelay = `${Math.random() * 3}s`;
+        steam.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+        container.appendChild(steam);
       }
     }
 
     window.addEventListener('load', () => {
-      createBubbles();
-      if (window.innerWidth > 768) {
-        createEggs();
-      }
+      createEggs();
+      createSteam();
     });
 
-    window.addEventListener('resize', () => {
-      if (window.innerWidth <= 768) {
-        document.querySelectorAll('.animated-egg').forEach(e => e.remove());
-      }
+    // Dynamiczny ruch przy scrollu
+    window.addEventListener('scroll', () => {
+      const speed = 0.3;
+      document.querySelectorAll('.egg-container').forEach(egg => {
+        const rect = egg.getBoundingClientRect();
+        egg.style.transform = `translateY(${window.scrollY * speed}px)`;
+      });
     });
   </script>
 </body>
