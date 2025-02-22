@@ -3,184 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfekcyjne Jajka - Poradnik</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Egg timer</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background: linear-gradient(45deg, #fff3e0 0%, #ffecb3 100%);
+            margin: 0;
             min-height: 100vh;
-            position: relative;
-            padding-bottom: 60px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px;
-        }
-
-        header {
-            text-align: center;
-            padding: 40px 0;
-            animation: fadeIn 1.5s ease-in;
-        }
-
-        h1 {
-            font-size: 3.5em;
-            color: #ff6f00;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-
-        .egg-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            padding: 20px;
-        }
-
-        .egg-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-            animation: slideUp 0.8s ease-out;
-        }
-
-        .egg-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .egg-type {
-            color: #ff6f00;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-        }
-
-        .cooking-time {
-            font-size: 2.5em;
-            color: #388e3c;
-            font-weight: 700;
-            text-align: center;
-            margin: 20px 0;
+            overflow-x: hidden;
+            background: 
+                linear-gradient(15deg, #fff5e6 25%, #ffecd2 100%),
+                repeating-radial-gradient(circle at 10% 20%, 
+                    rgba(255,230,180,0.2) 0%, 
+                    rgba(255,230,180,0.2) 5%, 
+                    transparent 5%, 
+                    transparent 10%),
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(255,180,120,0.1) 0px,
+                    rgba(255,180,120,0.1) 50px,
+                    rgba(255,210,150,0.1) 50px,
+                    rgba(255,210,150,0.1) 100px
+                );
+            animation: eggBackground 20s linear infinite;
             position: relative;
         }
 
-        .cooking-time::after {
+        /* Animowane jajeczka w tle */
+        body::before {
             content: "";
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: #ff6f00;
-            margin: 10px auto;
+            position: fixed;
+            width: 300vw;
+            height: 300vh;
+            background-image: 
+                radial-gradient(circle at 70% 30%, rgba(255,245,220,0.4) 3%, transparent 10%),
+                radial-gradient(circle at 30% 70%, rgba(255,245,220,0.4) 3%, transparent 10%),
+                linear-gradient(to right, 
+                    transparent 0%, 
+                    rgba(255,255,255,0.2) 50%, 
+                    transparent 100%);
+            animation: eggFlow 40s linear infinite;
+            z-index: -1;
         }
 
-        .description {
-            color: #666;
-            line-height: 1.6;
-            font-size: 0.95em;
-        }
-
-        .egg-icon {
-            width: 100px;
-            height: 100px;
-            background: #fff;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .egg-icon img {
-            width: 60px;
-            height: 60px;
-        }
-
-        footer {
-            position: absolute;
-            bottom: 0;
+        /* Efekt "parującej wody" */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9em;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0) 10%,
+                rgba(255,255,255,0.2) 90%);
+            pointer-events: none;
+            animation: steam 8s ease-in-out infinite;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes eggBackground {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 100px 200px, 200px 100px, 300px 300px; }
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes eggFlow {
+            0% { transform: rotate(0deg) translate(-50%, -50%); }
+            100% { transform: rotate(360deg) translate(50%, 50%); }
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2.5em;
-            }
-            
-            .egg-grid {
-                grid-template-columns: 1fr;
-            }
+        @keyframes steam {
+            0% { opacity: 0.3; background-position: 0 0; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0.3; background-position: 100% 100%; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🥚 Perfekcyjny Czas Gotowania Jajek 🍳</h1>
-            <p>Odkryj idealny czas przygotowania jajek w zależności od preferencji</p>
-        </header>
-
-        <main class="egg-grid">
-            <article class="egg-card">
-                <div class="egg-icon">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5234/5234765.png" alt="Jajko na miękko">
-                </div>
-                <h2 class="egg-type">Na miękko</h2>
-                <div class="cooking-time">3-4 min</div>
-                <p class="description">Płynne żółtko, idealne do maczania. Gotuj od momentu wrzenia wody, pamiętaj o szybkim schłodzeniu.</p>
-            </article>
-
-            <article class="egg-card">
-                <div class="egg-icon">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5234/5234772.png" alt="Jajko na półmiękko">
-                </div>
-                <h2 class="egg-type">Na półmiękko</h2>
-                <div class="cooking-time">5-6 min</div>
-                <p class="description">Żółtko częściowo ścięte, kremowa konsystencja. Idealne do kanapek i sałatek.</p>
-            </article>
-
-            <article class="egg-card">
-                <div class="egg-icon">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5234/5234790.png" alt="Jajko na twardo">
-                </div>
-                <h2 class="egg-type">Na twardo</h2>
-                <div class="cooking-time">8-10 min</div>
-                <p class="description">Całkowicie ścięte żółtko, idealne do sałatek, past jajecznych i jako dodatek.</p>
-            </article>
-        </main>
-
-        <footer>
-            <p>💡 Porada: Zawsze zaczynaj liczyć czas od momentu wrzenia wody! Jajka powinny być w temperaturze pokojowej.</p>
-        </footer>
-    </div>
 </body>
 </html>
